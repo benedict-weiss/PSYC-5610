@@ -2,6 +2,10 @@ import numpy as np
 from mitsuba import ScalarTransform4f as T
 import mitsuba as mi
 
+# can change contrast with directional, env, reflectance
+# reduce grain with spp
+# think about angles of light elevation and rotation - keep disc values constant?
+
 def initialise_scene(radius,
                     disc_elevation,
                     disc_rotation,
@@ -15,7 +19,7 @@ def initialise_scene(radius,
     disc_rotation_deg = float(np.rad2deg(disc_rotation))
 
     disc_to_world = (
-        T.translate([0.0, 0.0, 1.0])
+        T.translate([0.0, 0.0, 0.0]) # switch to 0,0,1 if using background method
         .rotate([0, 1, 0], disc_rotation_deg)
         .rotate([1, 0, 0], disc_elevation_deg)
         .scale(radius)
@@ -69,14 +73,14 @@ def initialise_scene(radius,
             'reflectance': 0.5
         },
 
-        'background': {
-            'type': 'rectangle',
-            'to_world': T.translate([0.0, 0.0, 0.0]).scale(3.0), # or 4.0 maybe?
-            'bsdf': {
-                'type': 'ref',
-                'id': 'gray'
-            }
-        },
+        # 'background': {
+        #     'type': 'rectangle',
+        #     'to_world': T.translate([0.0, 0.0, 0.0]).scale(3.0), # or 4.0 maybe?
+        #     'bsdf': {
+        #         'type': 'ref',
+        #         'id': 'gray'
+        #     }
+        # },
 
         # not great notation here haha
         'disc': {
@@ -95,6 +99,13 @@ def initialise_scene(radius,
             'irradiance': 2.0
         },
 
+
+        # different way to do it - stops shadows
+        "env": {
+            "type": "constant",
+            "radiance": 0.2,
+        },
+        
 
     }
 
